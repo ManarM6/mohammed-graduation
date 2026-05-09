@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}The End · Mohammed 🎬{% endblock %}
+
+{% block content %}
+<div class="credits-wrap">
+  <p class="film-end">✦ &nbsp; نهاية الفيلم &nbsp; ✦</p>
+  <div class="end-mark">🎬</div>
+  <h1 class="end-title"><span class="gold-text">The End</span></h1>
+  <p style="font-size:1.1rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;margin-bottom:2rem">Mohammed – The Graduation Story · 2025</p>
+  <div class="golden-line"></div>
+  <div class="new-chapter">
+    <div class="chapter-label">✦ رسالة الختام ✦</div>
+    <p class="chapter-text">
+      هذا ليس آخر الفيلم —<br>
+      هذه نهاية الجزء الأول فقط.<br><br>
+      أمامك فصول لم تُكتب بعد،<br>
+      ومشاهد ستُبهر كل من يعرفك.<br><br>
+      مبروك يا محمد 💙
+    </p>
+  </div>
+  <div class="golden-line"></div>
+  <p style="color:var(--gold);font-size:0.9rem;margin-bottom:2rem;opacity:0.8">★★★★★ &nbsp; قصة تستحق أن تُحكى</p>
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:3rem">
+    <a href="/letters" class="btn-gold">💙 ارجع للرسائل</a>
+    <a href="/" class="btn-outline">↩ الصفحة الرئيسية</a>
+  </div>
+  <div class="credits-roll">
+    إنتاج &nbsp;✦&nbsp; <span>M Studios</span><br>
+    قصة وإخراج &nbsp;✦&nbsp; <span>الحياة</span><br>
+    بطولة &nbsp;✦&nbsp; <span>محمد</span><br>
+    دعم وإنتاج &nbsp;✦&nbsp; <span>العائلة والأصحاب</span><br><br>
+    صُنع بكل حب ❤️
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+setTimeout(launchConfetti, 1600);
+setTimeout(launchConfetti, 3200);
+setTimeout(launchConfetti, 5000);
+</script>
+{% endblock %}

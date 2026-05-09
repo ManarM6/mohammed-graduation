@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: mohammed-graduation
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        value: mohammed2025
+    disk:
+      name: db
+      mountPath: /opt/render/project/src
+      sizeGB: 1

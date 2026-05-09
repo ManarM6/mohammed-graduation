@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}رسائل لمحمد 💙{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+  <div class="letters-wrap">
+    <div class="ornament">✦ &nbsp; رسائل خاصة &nbsp; ✦</div>
+    <div class="divider"></div>
+    <h1 class="section-title">شوف تهنئات<br><span class="gold-text">الناس اللي يحبونك</span> 💙</h1>
+    <p class="msg-count">{{ messages|length }} رسالة بانتظارك</p>
+
+    <div class="envelope-scene" onclick="openEnvelope()">
+      <div class="envelope" id="envelope">
+        <div class="env-body">
+          <div class="env-bottom"></div>
+          <div class="env-left"></div>
+          <div class="env-right"></div>
+        </div>
+        <div class="letter-paper" id="letterPaper">
+          <div style="height:8px;background:rgba(0,0,0,0.1);border-radius:4px;margin-bottom:6px;width:80%"></div>
+          <div style="height:6px;background:rgba(0,0,0,0.07);border-radius:4px;margin-bottom:6px;width:60%"></div>
+          <div style="height:6px;background:rgba(0,0,0,0.07);border-radius:4px;width:70%"></div>
+        </div>
+        <div class="env-flap" id="envFlap"></div>
+        <div class="env-seal" id="envSeal">🎓</div>
+      </div>
+    </div>
+
+    <p class="tap-hint" id="tapHint">✦ اضغط على الظرف لتفتحه ✦</p>
+
+    <div id="msgDisplay" class="message-display">
+      <p class="msg-text" id="msgText"></p>
+      <div class="msg-from">
+        <div class="msg-avatar" id="msgAvatar"></div>
+        <div>
+          <div class="msg-name" id="msgName"></div>
+          <div class="msg-relation" id="msgRelation"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="msg-counter" id="msgCounter" style="display:none"></p>
+
+    <div class="nav-btns" id="navBtns" style="display:none">
+      <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>← السابق</button>
+      <button class="nav-btn" id="nextBtn" onclick="navigate(1)">التالي →</button>
+    </div>
+
+    <div id="finaleLink" style="display:none;margin-top:1rem">
+      <a href="/finale" class="btn-gold">✨ الختام المميز</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+var messages = {{ messages | tojson }};
+var currentIdx = 0;
+var opened = false;
+
+function playChime() {
+  try {
+    var actx = new (window.AudioContext || window.webkitAudioContext)();
+    [523.25, 659.25, 783.99].forEach(function(freq, i) {
+      var osc = actx.createOscillator();
+      var gain = actx.createGain();
+      osc.connect(gain); gain.connect(actx.destination);
+      osc.frequency.value = freq; osc.type = 'sine';
+      gain.gain.setValueAtTime(0, actx.currentTime + i * 0.15);
+      gain.gain.linearRampToValueAtTime(0.18, actx.currentTime + i * 0.15 + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + i * 0.15 + 0.6);
+      osc.start(actx.currentTime + i * 0.15);
+      osc.stop(actx.currentTime + i * 0.15 + 0.6);
+    });
+  } catch(e) {}
+}
+
+function openEnvelope() {
+  if (opened) return;
+  if (messages.length === 0) { alert('لا توجد رسائل بعد!'); return; }
+  opened = true;
+  document.getElementById('tapHint').style.opacity = '0';
+  playChime();
+  document.getElementById('envelope').classList.add('open');
+  setTimeout(function() {
+    document.getElementById('envSeal').classList.add('hidden');
+    document.getElementById('envFlap').classList.add('open-flap');
+    document.getElementById('letterPaper').classList.add('visible');
+  }, 400);
+  setTimeout(function() {
+    document.getElementById('letterPaper').classList.add('risen');
+  }, 900);
+  setTimeout(function() {
+    showMessage(0);
+    document.getElementById('msgDisplay').classList.add('show');
+    document.getElementById('navBtns').style.display = 'flex';
+    document.getElementById('msgCounter').style.display = 'block';
+    document.getElementById('finaleLink').style.display = 'block';
+    launchConfetti();
+  }, 1300);
+}
+
+function showMessage(idx) {
+  var m = messages[idx];
+  document.getElementById('msgText').textContent = m.message_text;
+  document.getElementById('msgName').textContent = m.sender_name;
+  document.getElementById('msgRelation').textContent = m.relation || '';
+  document.getElementById('msgAvatar').textContent = m.sender_name.charAt(0);
+  document.getElementById('msgCounter').textContent = 'الرسالة ' + (idx+1) + ' من ' + messages.length;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === messages.length - 1;
+  var disp = document.getElementById('msgDisplay');
+  disp.style.animation = 'none';
+  void disp.offsetWidth;
+  disp.style.animation = 'fadeMsg 0.4s ease';
+}
+
+function navigate(dir) {
+  var n = currentIdx + dir;
+  if (n < 0 || n >= messages.length) return;
+  currentIdx = n;
+  showMessage(currentIdx);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block title %}اسئلة ممتعة 🎯{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .quiz-container {
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+  }
+  .progress-bar-wrap {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    margin-bottom: 3rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+  .question-card {
+    display: none;
+    animation: slideIn 0.5s ease;
+  }
+  .question-card.active { display: block; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .q-number {
+    font-size: 0.8rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+  }
+  .q-text {
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+    font-weight: 700;
+    margin-bottom: 2rem;
+    line-height: 1.4;
+  }
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  .option-btn {
+    background: var(--dark2);
+    border: 1.5px solid rgba(212,175,55,0.15);
+    color: var(--white);
+    padding: 1rem 0.8rem;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    line-height: 1.3;
+  }
+  .option-btn .opt-emoji { font-size: 1.8rem; }
+  .option-btn:hover {
+    border-color: var(--gold);
+    background: rgba(212,175,55,0.08);
+    transform: translateY(-2px);
+  }
+  .option-btn.selected {
+    border-color: var(--gold);
+    background: rgba(212,175,55,0.15);
+    box-shadow: 0 0 20px rgba(212,175,55,0.2);
+  }
+  .reveal-section {
+    display: none;
+    text-align: center;
+    animation: fadeUp 0.8s ease;
+  }
+  .reveal-section.show { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .result-personality {
+    font-size: 3rem;
+    margin: 1rem 0;
+  }
+  .result-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  .result-desc {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+  <div class="quiz-container">
+    <div class="progress-bar-wrap">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="question-card active" data-q="0">
+      <p class="q-number">✦ السؤال الأول ✦</p>
+      <h2 class="q-text">لو يوم إجازة كامل.. وين تحب تكون؟</h2>
+      <div class="options-grid">
+        <button class="option-btn" onclick="selectOption(this, 0, 'مغامر')">
+          <span class="opt-emoji">🏔️</span>في الطبيعة أو البر
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 0, 'اجتماعي')">
+          <span class="opt-emoji">☕</span>مع أصحاب وكافيه
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 0, 'منتج')">
+          <span class="opt-emoji">💻</span>في البيت أشتغل أو أتعلم
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 0, 'مبدع')">
+          <span class="opt-emoji">🎮</span>ألعاب أو ترفيه
+        </button>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-card" data-q="1">
+      <p class="q-number">✦ السؤال الثاني ✦</p>
+      <h2 class="q-text">أي نوع من المحتوى يشدك أكثر؟</h2>
+      <div class="options-grid">
+        <button class="option-btn" onclick="selectOption(this, 1, 'تقني')">
+          <span class="opt-emoji">🤖</span>تقنية وذكاء اصطناعي
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 1, 'رياضي')">
+          <span class="opt-emoji">⚽</span>رياضة وبطولات
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 1, 'ثقافي')">
+          <span class="opt-emoji">📚</span>كتب وأفكار وثقافة
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 1, 'ترفيهي')">
+          <span class="opt-emoji">🎬</span>أفلام ومسلسلات
+        </button>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-card" data-q="2">
+      <p class="q-number">✦ السؤال الثالث ✦</p>
+      <h2 class="q-text">لو حصلت على مبلغ فجأة.. أول شيء تسوي؟</h2>
+      <div class="options-grid">
+        <button class="option-btn" onclick="selectOption(this, 2, 'مسافر')">
+          <span class="opt-emoji">✈️</span>أحجز رحلة سفر
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 2, 'مستثمر')">
+          <span class="opt-emoji">📈</span>أستثمره أو أوفّره
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 2, 'منفق')">
+          <span class="opt-emoji">🛍️</span>أشتري شيء أبي إياه
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 2, 'كريم')">
+          <span class="opt-emoji">🤝</span>أصرفه على أهلي وأصحابي
+        </button>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-card" data-q="3">
+      <p class="q-number">✦ السؤال الرابع ✦</p>
+      <h2 class="q-text">اللي يعرفك يقول عنك إيش؟</h2>
+      <div class="options-grid">
+        <button class="option-btn" onclick="selectOption(this, 3, 'هادئ')">
+          <span class="opt-emoji">🌙</span>هادئ وعميق
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 3, 'مرح')">
+          <span class="opt-emoji">😄</span>مرح وحياته مسيرة
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 3, 'طموح')">
+          <span class="opt-emoji">🔥</span>طموح ويحب الإنجاز
+        </button>
+        <button class="option-btn" onclick="selectOption(this, 3, 'وفي')">
+          <span class="opt-emoji">💙</span>وفي وما يغير ناسه
+        </button>
+      </div>
+    </div>
+
+    <!-- Reveal -->
+    <div class="reveal-section" id="revealSection">
+      <div class="ornament">✦ &nbsp; نتيجتك &nbsp; ✦</div>
+      <div class="divider"></div>
+      <div class="result-personality" id="resultEmoji">🌟</div>
+      <h2 class="result-title gold-text" id="resultTitle">أنت شخص مميز</h2>
+      <p class="result-desc" id="resultDesc">شخصيتك فريدة ومحبوبة</p>
+      <p style="color: var(--gold); font-size: 0.9rem; margin-bottom: 1.5rem; opacity:0.8;">
+        ✦ والحين.. فيه أناس يبون يقولون لك شيء ✦
+      </p>
+      <a href="/unlock" class="btn-gold">شوف الناس ايش يقولون عنك 💙</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const answers = [];
+const personalities = {
+  مغامر: { emoji: '🏔️', title: 'الروح المغامرة', desc: 'أنت من النوع اللي ما يخاف يجرب ويكسر الروتين. شخصيتك تجذب الناس وتحب الحياة بحذافيرها.' },
+  اجتماعي: { emoji: '☕', title: 'القلب الدافي', desc: 'الناس تحس بالراحة معك. عندك قدرة نادرة تخلي أي تجمع أحلى.' },
+  منتج: { emoji: '💡', title: 'العقل المبدع', desc: 'دايماً تفكر وتطور نفسك. شخصيتك تعبر عن شخص عنده أهداف ورؤية واضحة.' },
+  مبدع: { emoji: '✨', title: 'الروح الحرة', desc: 'عندك ذوق وحس جمالي مميز. تحب الأشياء اللي تلمس قلبك.' },
+  تقني: { emoji: '🤖', title: 'المستقبلي', desc: 'أنت من جيل يصنع المستقبل. اهتمامك بالتقنية يقول إنك دايماً قدام.' },
+  رياضي: { emoji: '⚽', title: 'روح المنافس', desc: 'تحب التحدي والمنافسة. شخصيتك قوية وما تقبل أقل من الأفضل.' },
+  طموح: { emoji: '🔥', title: 'صاحب الهمة', desc: 'الطموح في عينيك واضح. ما تنام على إنجاز وعندك أهداف تشتغل عليها.' },
+  وفي: { emoji: '💙', title: 'الإنسان الأصيل', desc: 'الوفاء من أجمل صفاتك. الناس اللي معك محظوظين بصراحة.' },
+};
+
+function selectOption(btn, qIndex, personality) {
+  const card = document.querySelector(`[data-q="${qIndex}"]`);
+  card.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[qIndex] = personality;
+
+  setTimeout(() => {
+    const next = qIndex + 1;
+    const totalQ = 4;
+    const pct = ((next) / totalQ) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    if (next < totalQ) {
+      card.classList.remove('active');
+      document.querySelector(`[data-q="${next}"]`).classList.add('active');
+    } else {
+      card.classList.remove('active');
+      showResult();
+    }
+  }, 350);
+}
+
+function showResult() {
+  const freq = {};
+  answers.forEach(a => { freq[a] = (freq[a] || 0) + 1; });
+  const top = Object.entries(freq).sort((a,b) => b[1]-a[1])[0][0];
+  const p = personalities[top] || personalities['وفي'];
+
+  document.getElementById('resultEmoji').textContent = p.emoji;
+  document.getElementById('resultTitle').textContent = p.title;
+  document.getElementById('resultDesc').textContent = p.desc;
+
+  const reveal = document.getElementById('revealSection');
+  reveal.classList.add('show');
+  launchConfetti();
+}
+</script>
+{% endblock %}
