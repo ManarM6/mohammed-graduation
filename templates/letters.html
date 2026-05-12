@@ -2,6 +2,17 @@
 {% block title %}رسائل لمحمد 💙{% endblock %}
 
 {% block content %}
+<div id="lockScreen" style="position:fixed;inset:0;background:#080808;z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center;max-width:360px;padding:2rem;">
+    <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
+    <h2 style="color:#D4AF37;margin-bottom:0.5rem;font-size:1.5rem">الرسائل مقفلة</h2>
+    <p style="color:#888;margin-bottom:1.5rem;font-size:0.9rem">أدخل الرمز عشان تشوف الرسائل</p>
+    <input id="lockInput" type="password" placeholder="الرمز السري" style="width:100%;padding:0.9rem;background:#141414;border:1.5px solid rgba(212,175,55,0.3);color:white;font-size:1.1rem;border-radius:12px;text-align:center;letter-spacing:0.2em;outline:none;margin-bottom:1rem;font-family:Tajawal,sans-serif">
+    <div id="lockError" style="color:#e74c3c;font-size:0.85rem;margin-bottom:0.8rem;display:none">رمز خاطئ، حاول مرة ثانية</div>
+    <button onclick="checkCode()" style="width:100%;padding:0.9rem;background:linear-gradient(135deg,#D4AF37,#9B7E28);color:#080808;font-weight:800;font-size:1rem;border:none;border-radius:12px;cursor:pointer;font-family:Tajawal,sans-serif">فتح الرسائل 💙</button>
+  </div>
+</div>
+
 <div class="page-wrap">
   <div class="letters-wrap">
     <div class="ornament">✦ &nbsp; رسائل خاصة &nbsp; ✦</div>
@@ -55,6 +66,19 @@
 
 {% block scripts %}
 <script>
+function checkCode() {
+  var val = document.getElementById('lockInput').value.trim();
+  if (val === 'M2026') {
+    document.getElementById('lockScreen').style.display = 'none';
+  } else {
+    document.getElementById('lockError').style.display = 'block';
+    document.getElementById('lockInput').value = '';
+  }
+}
+document.getElementById('lockInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkCode();
+});
+
 var messages = {{ messages | tojson }};
 var currentIdx = 0;
 var opened = false;

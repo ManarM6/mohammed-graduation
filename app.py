@@ -20,17 +20,6 @@ class Message(db.Model):
     relation = db.Column(db.String(50), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-with app.app_context():
-    db.create_all()
-    if Message.query.count() == 0:
-        samples = [
-            Message(sender_name="أمك", message_text="محمد يا قلبي، من أول ما شفتك طفل صغير وأنا أحلم بهذا اليوم. تخرجك أسعد أيامي. فخورة فيك كل ثانية. ربي يحقق لك كل أحلامك ويسعدك دائماً 💛", relation="أم"),
-            Message(sender_name="أبوك", message_text="ابني محمد، التخرج مجرد بداية لمسيرة عظيمة. عرفتك من صغرك إنسان طموح وإنسان أصيل. أفتخر فيك أمام الكل. وفقك الله وسدد خطاك.", relation="أب"),
-            Message(sender_name="أخوك", message_text="أخوي محمد! ما تعرف كم أنا فخور فيك. شفتك تتعب وتسهر وتحاول، واليوم جاء ثمر تعبك. مبروك من كل قلبي 🤝", relation="أخ"),
-        ]
-        for s in samples:
-            db.session.add(s)
-        db.session.commit()
 
 @app.route('/')
 def index():
@@ -58,6 +47,32 @@ def letters():
 def finale():
     return render_template('finale.html')
 
+@app.route('/admin')
+def admin():
+    password = request.args.get('pw', '')
+    if password != os.environ.get('ADMIN_PASSWORD', 'admin123'):
+        return '<form><input name="pw" type="password" placeholder="الباسورد"><button>دخول</button></form>'
+    messages = Message.query.order_by(Message.created_at.desc()).all()
+    rows = ''.join([f'<tr><td>{m.id}</td><td>{m.sender_name}</td><td>{m.message_text[:50]}</td><td><a href="/admin/delete/{m.id}?pw={password}">حذف</a></td></tr>' for m in messages])
+    return f'<table border="1">{rows}</table><br><a href="/admin/delete-all?pw={password}">حذف الكل</a>'
+
+@app.route('/admin/delete/<int:id>')
+def delete_message(id):
+    password = request.args.get('pw', '')
+    if password != os.environ.get('ADMIN_PASSWORD', 'admin123'):
+        return 'غير مصرح'
+    Message.query.filter_by(id=id).delete()
+    db.session.commit()
+    return f'<meta http-equiv="refresh" content="0;url=/admin?pw={password}">'
+
+@app.route('/admin/delete-all')
+def delete_all():
+    password = request.args.get('pw', '')
+    if password != os.environ.get('ADMIN_PASSWORD', 'admin123'):
+        return 'غير مصرح'
+    Message.query.delete()
+    db.session.commit()
+    return f'<meta http-equiv="refresh" content="0;url=/admin?pw={password}">'
 @app.route('/write')
 def write():
     return render_template('write.html')
