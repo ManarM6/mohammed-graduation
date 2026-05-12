@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-   MOHAMMED GRADUATION - MAIN STYLES
+  MOHAMMED GRADUATION - MAIN STYLES
    ═══════════════════════════════════════ */
 
 :root {
@@ -176,13 +176,13 @@ body::before {
 .nav-links a:hover { color: var(--gold); }
 
 /* ════════════════════════════════
-   HERO (index page)
+  HERO (index page)
    ════════════════════════════════ */
 .hero-bg {
-  position: fixed; inset: 0;
+  position: absolute; inset: 0;
   background:
-    linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.8) 60%, #080808 100%),
-    url('/static/images/mohammed.jpg') center/cover no-repeat;
+    linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 60%, #080808 100%),
+    url('/static/images/posterr.PNG') center/cover no-repeat;
   z-index: 0;
 }
 .hero-particles { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
