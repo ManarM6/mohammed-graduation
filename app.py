@@ -50,8 +50,9 @@ def finale():
 @app.route('/admin')
 def admin():
     password = request.args.get('pw', '')
-    if password != os.environ.get('ADMIN_PASSWORD', 'admin123'):
-        return '<form><input name="pw" type="password" placeholder="الباسورد"><button>دخول</button></form>'
+    if not password:
+        return '<form action="/admin" method="get"><input name="pw" type="password" placeholder="الباسورد"><button>دخول</button></form>'    if password != os.environ.get('ADMIN_PASSWORD', 'admin123'):
+        return '<p>كلمة مرور خاطئة</p>'
     messages = Message.query.order_by(Message.created_at.desc()).all()
     rows = ''.join([f'<tr><td>{m.id}</td><td>{m.sender_name}</td><td>{m.message_text[:50]}</td><td><a href="/admin/delete/{m.id}?pw={password}">حذف</a></td></tr>' for m in messages])
     return f'<table border="1">{rows}</table><br><a href="/admin/delete-all?pw={password}">حذف الكل</a>'
